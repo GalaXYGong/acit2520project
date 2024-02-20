@@ -27,6 +27,8 @@ async function main() {
     const imgs = await IOhandler.readDir(pathUnzipped);
     const imgPaths = imgs.map((img) => path.join(pathUnzipped, img));
     const grayScale = await IOhandler.grayScale(imgPaths, pathProcessed);
+    const sepia = await IOhandler.grayScale(imgPaths, pathProcessed);
+
 
 };
 

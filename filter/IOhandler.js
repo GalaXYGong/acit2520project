@@ -116,15 +116,51 @@ const grayScale = (pathIn_list, pathOut) => {
     this.pack().pipe(fs.createWriteStream(path.join(pathOut, path.basename(pathIn))));
   });
 }};
-// list = [
-//   '/Users/galaxygong/Library/CloudStorage/OneDrive-BCIT/Term2/2520-web applicaiton development/Week6/starter/unzipped/in.png',
-//   '/Users/galaxygong/Library/CloudStorage/OneDrive-BCIT/Term2/2520-web applicaiton development/Week6/starter/unzipped/in1.png',
-//   '/Users/galaxygong/Library/CloudStorage/OneDrive-BCIT/Term2/2520-web applicaiton development/Week6/starter/unzipped/in2.png'
-// ]
-// grayScale(list,"./grayscaled")
 
+
+const sepia = (pathIn_list, pathOut) => {
+  for (const pathIn of pathIn_list) {
+    
+  fs.createReadStream(pathIn)
+  .pipe(
+    new PNG({
+      filterType: 4,
+    })
+  )
+  .on("parsed", function () {
+    for (var y = 0; y < this.height; y++) {
+      for (var x = 0; x < this.width; x++) {
+        var idx = (this.width * y + x) << 2;
+        // invert color
+        const R = this.data[idx];
+        const G = this.data[idx+1];
+        const B = this.data[idx+2];
+        // const l = (30*r + 59*g + 11*b)
+        this.data[idx] = Math.min(0.393*R + 0.769*G + 0.189*B,255)
+        this.data[idx + 1] = Math.min(0.349*R + 0.686*G + 0.168*B,255)
+        this.data[idx + 2] = Math.min(0.272*R + 0.534*G + 0.131*B,255)
+        /*
+        newRed =   0.393*R + 0.769*G + 0.189*B
+        newGreen = 0.349*R + 0.686*G + 0.168*B
+        newBlue =  0.272*R + 0.534*G + 0.131*B
+        */
+        // and reduce opacity
+        // this.data[idx + 3] = this.data[idx + 3] >> 1;
+      }
+    }
+    this.pack().pipe(fs.createWriteStream(path.join(pathOut, path.basename(pathIn))));
+  });
+}};
+
+// list = [
+//   'unzipped/in.png',
+//   'unzipped/in1.png',
+//   'unzipped/in2.png'
+// ]
+// sepia(list,"./sepia")
 module.exports = {
   unzip,
   readDir,
   grayScale,
+  sepia
 };
